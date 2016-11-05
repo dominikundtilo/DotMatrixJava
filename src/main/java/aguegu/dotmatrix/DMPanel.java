@@ -171,7 +171,13 @@ class DMPanel extends JPanel implements MouseListener {
 
 			int index = getIndex(blockY / 9, blockID, blockC, blockR);
 
-			dm.reverseDot(index);
+			if (e.isShiftDown()) {
+				dm.setDot(index, true);
+			} else if (e.isControlDown()) {
+				dm.setDot(index, false);
+			}else {
+				dm.reverseDot(index);
+			}
 
 			update();
 			repaint();
