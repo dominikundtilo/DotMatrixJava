@@ -15,6 +15,8 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private DotMatrix dm;
 	private DMImage[] dmi;
 	private DMMode mode;
+	private boolean leftPressed;
+	private int lastBlockID, lastBlockColumn, lastBlockRow, lastRow;
 
 	public DMPanel() {
 		this.setSize(DMImage.getBlockWidth() * (9 * 8 + 1),
@@ -162,13 +164,14 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			int blockID = getBlockID(e.getX());
-			int blockC = getBlockColumn(e.getX());
-			int blockR = getBlockRow(e.getY());
+			int blockColumn = getBlockColumn(e.getX());
+			int blockRow = getBlockRow(e.getY());
+			int row = getRow(e.getY());
 
-			if (blockID >= 8 || blockC < 0 || blockR < 0)
+			if (blockID >= 8 || blockColumn < 0 || blockRow < 0)
 				return;
 
-			int index = getIndex(getRow(e.getY()), blockID, blockC, blockR);
+			int index = getIndex(row, blockID, blockColumn, blockRow);
 
 			if (e.isShiftDown()) {
 				dm.setDot(index, true);
@@ -177,6 +180,12 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 			}else {
 				dm.reverseDot(index);
 			}
+
+			leftPressed = true;
+			lastBlockID = blockID;
+			lastBlockColumn = blockColumn;
+			lastBlockRow = blockRow;
+			lastRow = row;
 
 			update();
 			repaint();
@@ -207,7 +216,9 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			leftPressed = false;
+		}
 	}
 
 	@Override
@@ -222,7 +233,37 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		if (leftPressed) {
+			if (e.isAltDown()) return;
+			int blockID = getBlockID(e.getX());
+			int blockColumn = getBlockColumn(e.getX());
+			int blockRow = getBlockRow(e.getY());
+			int row = getRow(e.getY());
 
+			if (blockID >= 8 || blockColumn < 0 || blockRow < 0)
+				return;
+
+			if (blockID == lastBlockID && blockColumn == lastBlockColumn && blockRow == lastBlockRow && row == lastRow)
+				return;
+
+			int index = getIndex(getRow(e.getY()), blockID, blockColumn, blockRow);
+
+			if (e.isShiftDown()) {
+				dm.setDot(index, true);
+			} else if (e.isControlDown()) {
+				dm.setDot(index, false);
+			}else {
+				dm.reverseDot(index);
+			}
+
+			lastBlockID = blockID;
+			lastBlockColumn = blockColumn;
+			lastBlockRow = blockRow;
+			lastRow = row;
+
+			update();
+			repaint();
+		}
 	}
 
 	@Override
