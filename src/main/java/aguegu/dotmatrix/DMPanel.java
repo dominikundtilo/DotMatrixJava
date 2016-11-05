@@ -8,8 +8,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseMotionListener;
 
-class DMPanel extends JPanel implements MouseListener {
+class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = -2531292225634588108L;
 	private DotMatrix dm;
 	private DMImage[] dmi;
@@ -31,6 +32,7 @@ class DMPanel extends JPanel implements MouseListener {
 		mode = DMMode.XYZ;
 
 		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		init();
 	}
 
@@ -159,17 +161,14 @@ class DMPanel extends JPanel implements MouseListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			int blockX = e.getX() / DMImage.getBlockWidth();
-			int blockY = e.getY() / DMImage.getBlockWidth();
-
-			int blockID = blockX / 9;
-			int blockC = blockX % 9 - 1;
-			int blockR = blockY % 9 - 1;
+			int blockID = getBlockID(e.getX());
+			int blockC = getBlockColumn(e.getX());
+			int blockR = getBlockRow(e.getY());
 
 			if (blockID >= 8 || blockC < 0 || blockR < 0)
 				return;
 
-			int index = getIndex(blockY / 9, blockID, blockC, blockR);
+			int index = getIndex(getRow(e.getY()), blockID, blockC, blockR);
 
 			if (e.isShiftDown()) {
 				dm.setDot(index, true);
@@ -177,6 +176,28 @@ class DMPanel extends JPanel implements MouseListener {
 				dm.setDot(index, false);
 			}else {
 				dm.reverseDot(index);
+			}
+
+			update();
+			repaint();
+		} else if (e.getButton() == MouseEvent.BUTTON2) {
+			int blockID = getBlockID(e.getX());
+
+			if (blockID >= 8 || getBlockColumn(e.getX()) < 0 || getBlockRow(e.getY()) < 0)
+				return;
+
+			for (int x = 0 ; x < 8; x++) {
+				for (int y = 0; y < 8; y++) {
+					int index = getIndex(getRow(e.getY()), blockID, x, y);
+
+					if (e.isShiftDown()) {
+						dm.setDot(index, true);
+					} else if (e.isControlDown()) {
+						dm.setDot(index, false);
+					}else {
+						dm.reverseDot(index);
+					}
+				}
 			}
 
 			update();
@@ -199,4 +220,29 @@ class DMPanel extends JPanel implements MouseListener {
 
 	}
 
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+
+	}
+
+	private static int getBlockColumn(int x) {
+		return (x / DMImage.getBlockWidth()) % 9 - 1;
+	}
+
+	private static int getBlockRow(int y) {
+		return (y / DMImage.getBlockWidth()) % 9 - 1;
+	}
+
+	private static int getBlockID(int x) {
+		return (x / DMImage.getBlockWidth()) / 9;
+	}
+
+	private static int getRow(int y) {
+		return (y / DMImage.getBlockWidth()) / 9;
+	}
 }
