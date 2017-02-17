@@ -54,7 +54,7 @@ public class DotMatrixTest extends JFrame {
 	private static final String PROGRAME_NAME = new String(
 			"3D8 TF Animation Editor");
 
-	private Locale locale = Locale.CHINESE;
+	private Locale locale = Locale.getDefault();
 	private ResourceBundle res;
 
 	private File fileRecord = null;
