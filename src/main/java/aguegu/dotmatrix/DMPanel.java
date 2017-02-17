@@ -1,16 +1,10 @@
 package aguegu.dotmatrix;
 
 import javax.swing.JPanel;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseMotionListener;
-
-class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
+class DMPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = -2531292225634588108L;
 	private DotMatrix dm;
 	private DMImage[] dmi;
@@ -35,6 +29,7 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+		this.addMouseWheelListener(this);
 		init();
 	}
 
@@ -264,6 +259,40 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener {
 			update();
 			repaint();
 		}
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		int blockID = getBlockID(e.getX());
+		int row = getRow(e.getY());
+
+		if (blockID >= 8 || getBlockColumn(e.getX()) < 0 || getBlockRow(e.getY()) < 0)
+			return;
+
+		boolean[][] oldData = new boolean[8][8];
+
+		// load
+		for (int x = 0 ; x < 8; x++)
+			for (int y = 0; y < 8; y++)
+				oldData[x][y] = dm.getDot(getIndex(row, blockID, x, y));
+
+		// rotate
+		if (e.getWheelRotation() < 0) {
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					dm.setDot(getIndex(row, blockID, i, j), oldData[7 - j][i]);
+				}
+			}
+		} else if (e.getWheelRotation() > 0) {
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					dm.setDot(getIndex(row, blockID, i, j), oldData[j][7 - i]);
+				}
+			}
+		}
+
+		update();
+		repaint();
 	}
 
 	@Override
