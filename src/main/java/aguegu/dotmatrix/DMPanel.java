@@ -11,6 +11,7 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 	private DMMode mode;
 	private boolean leftPressed;
 	private int lastBlockID, lastBlockColumn, lastBlockRow, lastRow;
+	private int highlight = -1;
 
 	public DMPanel() {
 		this.setSize(DMImage.getBlockWidth() * (9 * 8 + 1),
@@ -122,11 +123,21 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 			dmi[y].setDot(z * 8 + x, val);
 			dmi[8 + x].setDot(z * 8 + 7 - y, val);
 			dmi[16 + z].setDot((7 - y) * 8 + x, val);
+			dmi[y].setHighlight(z * 8 + x, i == highlight);
+			dmi[8 + x].setHighlight(z * 8 + 7 - y, i == highlight);
+			dmi[16 + z].setHighlight((7 - y) * 8 + x, i == highlight);
 		}
 
 		for (DMImage image : dmi) {
 			image.update();
 		}
+	}
+
+	private void updateHighlight(int index) {
+		if (index == highlight) return;
+		highlight = index;
+		update();
+		repaint();
 	}
 
 	@Override
@@ -228,20 +239,30 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		int blockID = getBlockID(e.getX());
+		int blockColumn = getBlockColumn(e.getX());
+		int blockRow = getBlockRow(e.getY());
+		int row = getRow(e.getY());
+
+		if (blockID >= 8 || blockColumn < 0 || blockRow < 0) {
+			updateHighlight(-1);
+			return;
+		}
+
+		int index = getIndex(getRow(e.getY()), blockID, blockColumn, blockRow);
+
 		if (leftPressed) {
-			if (e.isAltDown()) return;
-			int blockID = getBlockID(e.getX());
-			int blockColumn = getBlockColumn(e.getX());
-			int blockRow = getBlockRow(e.getY());
-			int row = getRow(e.getY());
-
-			if (blockID >= 8 || blockColumn < 0 || blockRow < 0)
+			if (e.isAltDown()) {
+				updateHighlight(index);
 				return;
+			}
 
-			if (blockID == lastBlockID && blockColumn == lastBlockColumn && blockRow == lastBlockRow && row == lastRow)
+			if (blockID == lastBlockID && blockColumn == lastBlockColumn && blockRow == lastBlockRow && row == lastRow) {
+				updateHighlight(index);
 				return;
+			}
 
-			int index = getIndex(getRow(e.getY()), blockID, blockColumn, blockRow);
+			highlight = index;
 
 			if (e.isShiftDown()) {
 				dm.setDot(index, true);
@@ -258,6 +279,8 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
 			update();
 			repaint();
+		} else {
+			updateHighlight(index);
 		}
 	}
 
@@ -297,7 +320,12 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		int blockID = getBlockID(e.getX());
+		int blockColumn = getBlockColumn(e.getX());
+		int blockRow = getBlockRow(e.getY());
+		int row = getRow(e.getY());
 
+		updateHighlight(blockID >= 8 || blockColumn < 0 || blockRow < 0 ? -1 :getIndex(row, blockID, blockColumn, blockRow));
 	}
 
 	private static int getBlockColumn(int x) {
