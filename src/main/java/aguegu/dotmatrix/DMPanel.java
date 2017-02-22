@@ -229,12 +229,22 @@ class DMPanel extends JPanel implements MouseListener, MouseMotionListener, Mous
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		int blockID = getBlockID(e.getX());
+		int blockColumn = getBlockColumn(e.getX());
+		int blockRow = getBlockRow(e.getY());
+		int row = getRow(e.getY());
 
+		updateHighlight(blockID >= 8 || blockColumn < 0 || blockRow < 0 ? -1 :getIndex(row, blockID, blockColumn, blockRow));
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		int blockID = getBlockID(e.getX());
+		int blockColumn = getBlockColumn(e.getX());
+		int blockRow = getBlockRow(e.getY());
+		int row = getRow(e.getY());
 
+		updateHighlight(blockID >= 8 || blockColumn < 0 || blockRow < 0 ? -1 :getIndex(row, blockID, blockColumn, blockRow));
 	}
 
 	@Override
