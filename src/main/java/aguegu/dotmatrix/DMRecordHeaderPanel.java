@@ -1,19 +1,13 @@
 package aguegu.dotmatrix;
 
-import java.awt.FlowLayout;
-import java.awt.Insets;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSlider;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -96,6 +90,14 @@ public class DMRecordHeaderPanel extends JPanel {
 		panelSliders.add(sliderBrightness);
 		panelSliders.add(new JLabel(res.getString("time_span") + ":"));
 		panelSliders.add(sliderSpan);
+
+		final JButton exportBtn = new JButton(res.getString("export"));
+		exportBtn.addActionListener(e -> {
+			StringSelection selection = new StringSelection(parent.parent.dmr.getExportString());
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			clipboard.setContents(selection, selection);
+		});
+		panelSliders.add(exportBtn);
 
 		this.add(panelModeAndAttachment);
 		this.add(panelSliders);

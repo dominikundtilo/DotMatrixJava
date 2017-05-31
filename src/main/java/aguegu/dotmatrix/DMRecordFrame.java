@@ -89,4 +89,8 @@ public class DMRecordFrame {
 	public String getCacheString() {
 		return DotMatrix.cacheString(getData());
 	}
+
+	public String getExportString() {
+		return DotMatrix.exportString(getData());
+	}
 }

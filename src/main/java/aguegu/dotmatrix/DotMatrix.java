@@ -83,6 +83,13 @@ public class DotMatrix {
 		return s;
 	}
 
+	static String exportString(byte[] cache) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 8; i < cache.length; i++)
+			builder.append(String.format("0x%02x, ", cache[i]));
+		return builder.toString();
+	}
+
 	static public int byteToInt(byte c) {
 		int i = ((int) c + 256) % 256;
 		return i;
@@ -134,7 +141,7 @@ public class DotMatrix {
 		}
 	}
 
-	private int getIndex(int x, int y, int z) {
+	private static int getIndex(int x, int y, int z) {
 		return (64 * z + 8 * y + x);
 	}
 

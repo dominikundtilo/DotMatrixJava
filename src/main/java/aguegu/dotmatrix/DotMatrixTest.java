@@ -35,7 +35,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class DotMatrixTest extends JFrame {
 	private static final long serialVersionUID = 5805285424717739698L;
 
-	private DMRecord dmr;
+	protected DMRecord dmr;
 	private DMRecordList listFrame;
 	private DMRecordFrame dmrf;
 
@@ -77,7 +77,7 @@ public class DotMatrixTest extends JFrame {
 		if (dmrf == null)
 			dmrf = new DMRecordFrame(0);
 
-		panelRecord = new DMRecordPanel(res);
+		panelRecord = new DMRecordPanel(this, res);
 		panelRecord.setFrame(dmrf);
 
 		panelToolbar = panelToolBar();

@@ -145,6 +145,16 @@ public class DMRecord {
 		}
 	}
 
+	public String getExportString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("{ ");
+		for (int i = 0; i < record.size(); i++)
+			builder.append(record.get(i).getExportString());
+		builder.setLength(builder.length() - 2);
+		builder.append(" };");
+		return builder.toString();
+	}
+
 	private void sortRecord() {
 		Collections.sort(record, new FrameComparator());
 	}

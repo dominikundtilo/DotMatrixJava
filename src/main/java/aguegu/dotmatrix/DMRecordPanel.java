@@ -58,9 +58,11 @@ public class DMRecordPanel extends JPanel {
 	private JPanel panelFrameOperation;
 
 	private ResourceBundle res;
+	protected DotMatrixTest parent;
 
-	public DMRecordPanel(ResourceBundle res) {
+	public DMRecordPanel(DotMatrixTest parent, ResourceBundle res) {
 		this.res = res;
+		this.parent = parent;
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		panelController = new JPanel();
