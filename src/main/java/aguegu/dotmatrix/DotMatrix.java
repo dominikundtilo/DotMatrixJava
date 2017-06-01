@@ -85,7 +85,7 @@ public class DotMatrix {
 
 	static String exportString(byte[] cache) {
 		StringBuilder builder = new StringBuilder();
-		for (int i = 8; i < cache.length; i++)
+		for (int i = cache.length - 1; i >= 8; i--)
 			builder.append(String.format("0x%02x, ", cache[i]));
 		return builder.toString();
 	}
