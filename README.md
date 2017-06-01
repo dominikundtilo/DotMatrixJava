@@ -1,6 +1,6 @@
 DotMatrixJava
 =============
 
-Java PC animation generator for 3D8S 8x8x8 Led charlieplexed
+A Java based animation generator for an 8x8x8 LED Cube.
 
 [Download](https://github.com/dominikundtilo/dotmatrix/releases/latest)
